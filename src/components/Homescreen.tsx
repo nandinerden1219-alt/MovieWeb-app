@@ -7,10 +7,14 @@ import {
 } from "@/components/ui/carousel";
 import MovieCarousel from "./MovieCarousel";
 let Homescreen = () => {
+  const movies = [
+    { imageUrl: "/Feature.png", title: "Wicked", rating: 6.9 },
+    { imageUrl: "/dune.jpeg", title: "Gladiator II", rating: 7.5 },
+  ];
   return (
-    <Carousel className="w-full sm:max-w-xs">
+    <Carousel className="w-full ">
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
+        {Array.from({ length: 8 }).map((_, index) => (
           <CarouselItem key={index}>
             <div className="p-1">
               <div>
