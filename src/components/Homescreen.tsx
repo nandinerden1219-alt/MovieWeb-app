@@ -1,3 +1,9 @@
+"use client";
+
+import axios from "axios";
+import { useEffect, useState } from "react";
+import MovieCarousel from "./MovieCarousel";
+
 import {
   Carousel,
   CarouselContent,
@@ -5,28 +11,48 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import MovieCarousel from "./MovieCarousel";
-let Homescreen = () => {
-  const movies = [
-    { imageUrl: "/Feature.png", title: "Wicked", rating: 6.9 },
-    { imageUrl: "/dune.jpeg", title: "Gladiator II", rating: 7.5 },
-  ];
+
+type Movie = {
+  id: number;
+  title: string;
+  backdrop_path: string;
+  vote_average: number;
+  overview: string;
+};
+
+export default function Homescreen() {
+  const [movies, setMovies] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    const getMovies = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
+          {
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDAyYjY2NzQ0ZTY2ZTlmYTM2M2E4NzRkMTYzM2NlMiIsIm5iZiI6MTc3OTI0MzcyMi42NzIsInN1YiI6IjZhMGQxYWNhNWFiYWM5Zjg4YTBjMDhlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MwYe5N4PQeHkl8nM5Tz-kyEFxpCvRN5QA_zFSvjQZb4`,
+            },
+          },
+        );
+
+        setMovies(response.data.results);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getMovies();
+  }, []);
+
   return (
-    <Carousel className="w-full ">
+    <Carousel className="w-full">
       <CarouselContent>
-        {Array.from({ length: 8 }).map((_, index) => (
-          <CarouselItem key={index}>
-            <div className="p-1">
-              <div>
-                <MovieCarousel />
-              </div>
-            </div>
+        {movies.map((movie) => (
+          <CarouselItem key={movie.id}>
+            <MovieCarousel movie={movie} />
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
     </Carousel>
   );
-};
-export default Homescreen;
+}

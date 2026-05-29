@@ -6,29 +6,44 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import { useRouter } from "next/router";
 import { Star } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+type MovieProps = {
+  title: string;
+  image: string;
+  rating: number;
+  id: number;
+};
 
-let MovieCard = (props) => {
+let MovieCard = ({ image, rating, title, id }: MovieProps) => {
   return (
-    <Card className="w-[230px] h-[439px] pt-0 ">
-      <CardHeader className="p-0 h-[340px]">
-        <Image src={props.image} width={230} height={100} alt="movie image" />
-      </CardHeader>
-      <CardContent className="flex flex-col  pb-2">
-        <CardAction className="flex gap-1 items-center">
-          <Star className="h-4 w-3 fill-[#f0c20b] stroke-[#f0c20b]" />
-          <span className="text-sm font-bold flex items-center">
-            {props.rating}
-            <p className="text-gray-500 text-xs font-medium">/10</p>
-          </span>
-        </CardAction>
-        <CardTitle className="text-lg">
-          <p>{props.title}</p>
-        </CardTitle>
-      </CardContent>
-    </Card>
+    <Link href={`/${id}`}>
+      <Card className="w-[230px] h-[439px] pt-0 ">
+        <CardHeader className="p-0 h-[340px]">
+          <Image
+            src={image}
+            width={500}
+            height={750}
+            className="w-full h-auto rounded-lg"
+            alt="movie image"
+          />
+        </CardHeader>
+        <CardContent className="flex flex-col  pb-2">
+          <CardAction className="flex gap-1 items-center">
+            <Star className="h-4 w-3 fill-[#f0c20b] stroke-[#f0c20b]" />
+            <span className="text-sm font-bold flex items-center">
+              {Math.round(rating)}
+              <p className="text-gray-500 text-xs font-medium">/10</p>
+            </span>
+          </CardAction>
+          <CardTitle className="text-lg">
+            <p>{title}</p>
+          </CardTitle>
+        </CardContent>
+      </Card>
+    </Link>
   );
 };
 export default MovieCard;

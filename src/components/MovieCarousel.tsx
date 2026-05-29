@@ -1,31 +1,54 @@
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
+  CardAction,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-let MovieCarousel = () => {
+import { Star } from "lucide-react";
+import { CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+type MovieProps = {
+  movie: {
+    title: string;
+    backdrop_path: string;
+    vote_average: number;
+    overview: string;
+  };
+};
+
+export default function MovieCarousel({ movie }: MovieProps) {
   return (
     <Card
+      className="w-full h-[800px] rounded-none border-none bg-cover bg-center relative overflow-hidden flex"
       style={{
-        background: "url(/Feature.png)",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
+        backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
       }}
-      className="min-w-[1440px] h-[600px]"
     >
-      <CardHeader>
-        <CardTitle>Card Title</CardTitle>
-        <CardDescription>Card Description</CardDescription>
-        <CardAction>Card Action</CardAction>
-      </CardHeader>
-      <CardContent>
-        <p>Card Content</p>
+      <CardContent className=" flex flex-col justify-center items-between h-full p-20 text-white max-w-full">
+        <CardHeader className="bg-black flex flex-col bg-opacity-50 p-10 rounded-lg max-w-[700px]">
+          <p className="text-4">Now Playing:</p>
+          <h1 className="text-[36px] font-bold mb-4">{movie.title}</h1>
+
+          <CardAction className="flex gap-2">
+            <Star className="h-5.4 w-6 fill-[#f0c20b] stroke-[#f0c20b]" />
+            <span className="text-xl font-bold flex gap-0.5  items-center">
+              {Math.round(movie.vote_average)}
+              <p className="text-gray-500 text-xl font-medium">/10</p>
+            </span>
+          </CardAction>
+
+          <p className="text-lg text-gray-200 line-clamp-3 mt-4 w-[500px]">
+            {movie.overview}
+          </p>
+
+          <button className="mt-6 bg-white text-black px-6 py-3 rounded-md w-fit font-semibold hover:bg-gray-200 transition">
+            Watch Trailer
+          </button>
+        </CardHeader>
+        <div className="flex justify-between">
+          <CarouselPrevious className="relative " />
+          <CarouselNext className="relative " />
+        </div>
       </CardContent>
     </Card>
   );
-};
-export default MovieCarousel;
+}

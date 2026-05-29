@@ -2,26 +2,22 @@
 import MovieCard from "@/components/MovieCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
-
 type Movie = {
   id: number;
   title: string;
   vote_average: number;
   poster_path: string;
 };
-export default function Upcoming() {
+export default function TopRated() {
   const [movies, setMovies] = useState<Movie[]>([]);
   useEffect(() => {
     axios
       .get(
-        "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
-
+        `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1`,
         {
           headers: {
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDAyYjY2NzQ0ZTY2ZTlmYTM2M2E4NzRkMTYzM2NlMiIsIm5iZiI6MTc3OTI0MzcyMi42NzIsInN1YiI6IjZhMGQxYWNhNWFiYWM5Zjg4YTBjMDhlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MwYe5N4PQeHkl8nM5Tz-kyEFxpCvRN5QA_zFSvjQZb4",
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDAyYjY2NzQ0ZTY2ZTlmYTM2M2E4NzRkMTYzM2NlMiIsIm5iZiI6MTc3OTI0MzcyMi42NzIsInN1YiI6IjZhMGQxYWNhNWFiYWM5Zjg4YTBjMDhlZiIsInNjb3BlcyI6WyJhcGxfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MwYe5N4PQeHkl8nM5Tz-kyEFxpCvRN5QA_zFSvjQZb4",
           },
         },
       )
@@ -30,26 +26,21 @@ export default function Upcoming() {
         setMovies(response.data.results);
       });
   }, []);
-  const router = useRouter();
-  const pushToUpcoming = () => {
-    router.push("/upcoming");
-  };
   return (
     <>
       <div className="pl-30 pr-30 pt-20 flex flex-col justify-center gap-10 ">
         <div className="text-[24px] flex justify-between items-between font-bold">
-          <p>Upcoming</p> <Button onClick={pushToUpcoming}>See more</Button>
+          <p>Top Rated</p>
         </div>
         <div className="flex items-center gap-10 flex-wrap justify-between">
           {movies.length > 0 &&
             movies
-              .slice(0, 10)
+              .slice(0, 20)
               .map((movie) => (
                 <MovieCard
                   key={movie.id}
                   title={movie.title}
                   rating={movie.vote_average}
-                  id={movie.id}
                   image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                 />
               ))}
