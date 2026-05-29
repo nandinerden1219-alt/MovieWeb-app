@@ -5,8 +5,22 @@ import { useParams } from "next/navigation";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import ReactPlayer from "react-player";
+import MovieCard from "@/components/MovieCard";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 type genreType = {
   id: number;
+  name: string;
+};
+type crewType = {
+  job: string;
   name: string;
 };
 type MovieDetailType = {
@@ -34,14 +48,20 @@ type MovieDetailType = {
   tagline: string;
   title: string;
   video: boolean;
-  vote_average: undefined;
+  vote_average: number;
   vote_count: number;
   cast?: { name: string }[];
+  id: number;
 };
 
 export default function Home() {
   const [movie, setMovie] = useState<MovieDetailType>();
   const [video, setVideo] = useState("");
+  const [cast, setCast] = useState<{ name: string }[]>();
+  const [director, setDirector] = useState<crewType>();
+  const [writers, setWriters] = useState<crewType[]>();
+  const [similarMovies, setSimilarMovies] = useState<MovieDetailType[]>([]);
+  const [isTrailerShowed, setIsTrailerShowed] = useState(false);
   useEffect(() => {
     axios
       .get(`https://api.themoviedb.org/3/movie/${params.id}`, {
@@ -65,7 +85,48 @@ export default function Home() {
         console.log(response, "video response");
         setVideo(response.data.results[0]?.key);
       });
+    axios
+      .get(
+        `https://api.themoviedb.org/3/movie/${params.id}/credits?language=en-US`,
+        {
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDAyYjY2NzQ0ZTY2ZTlmYTM2M2E4NzRkMTYzM2NlMiIsIm5iZiI6MTc3OTI0MzcyMi42NzIsInN1YiI6IjZhMGQxYWNhNWFiYWM5Zjg4YTBjMDhlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MwYe5N4PQeHkl8nM5Tz-kyEFxpCvRN5QA_zFSvjQZb4",
+          },
+        },
+      )
+      .then((response) => {
+        console.log(response, "cast response");
+        console.log(response.data.crew, "crew response");
+        setCast(response.data.cast);
+        setDirector(
+          response.data.crew.filter(
+            (member: crewType) => member.job === "Director",
+          )[0],
+        );
+        setWriters(
+          response.data.crew.filter(
+            (member: crewType) => member.job === "Writer",
+          ),
+        );
+      });
+
+    axios
+      .get(
+        `https://api.themoviedb.org/3/movie/${params.id}/similar?language=en-US&page=1`,
+        {
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDAyYjY2NzQ0ZTY2ZTlmYTM2M2E4NzRkMTYzM2NlMiIsIm5iZiI6MTc3OTI0MzcyMi42NzIsInN1YiI6IjZhMGQxYWNhNWFiYWM5Zjg4YTBjMDhlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MwYe5N4PQeHkl8nM5Tz-kyEFxpCvRN5QA_zFSvjQZb4",
+          },
+        },
+      )
+      .then((response) => {
+        console.log(response, "similar movies response");
+        setSimilarMovies(response.data.results);
+      });
   }, []);
+  const handleOnClick = () => setIsTrailerShowed(!isTrailerShowed);
   const params = useParams();
   console.log(params, "params");
   console.log(movie, "movie");
@@ -99,13 +160,46 @@ export default function Home() {
           className="border rounded-sm"
           alt="movie poster"
         />
+
         <Image
           src={`https://image.tmdb.org/t/p/w500${movie?.backdrop_path}`}
           width={1200}
           height={428}
           className="border rounded-sm"
           alt="movie backdrop"
-        />
+          onClick={handleOnClick}
+        >
+          {" "}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">watch trailer</Button>
+            </DialogTrigger>
+            <DialogContent showCloseButton={false}>
+              <DialogHeader>
+                <DialogDescription>
+                  {isTrailerShowed ? (
+                    <ReactPlayer
+                      src={`https://www.youtube.com/watch?v=${video}`}
+                      controls={true}
+                      width={1200}
+                      height={428}
+                      volume={1}
+                    />
+                  ) : (
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500${movie?.backdrop_path}`}
+                      width={1200}
+                      height={428}
+                      className="border rounded-sm"
+                      alt="movie backdrop"
+                      onClick={handleOnClick}
+                    />
+                  )}
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </Image>
       </div>
       <div className="flex flex-wrap gap-2 mt-6">
         {movie?.genres?.map((genre) => {
@@ -122,23 +216,36 @@ export default function Home() {
       <p className="text-lg mt-6">{movie?.overview}</p>
       <div className="flex gap-10 mt-6 border border-t-0 pb-3 border-r-0 border-l-0 border-b-gray-300">
         <h2 className="font-bold">Director</h2>
-        <p>Director Name</p>
+        <p>{director?.name}</p>
       </div>
       <div className="flex gap-10 mt-6 border border-t-0 pb-3 border-r-0 border-l-0 border-b-gray-300">
         <h2 className="font-bold">Writers</h2>
-        <p>Writer Name</p>
+        <p>{writers?.map((writer) => writer.name).join(", ")}</p>
       </div>
       <div className="flex gap-10 mt-6 border border-t-0 pb-3 border-r-0 border-l-0 border-b-gray-300">
         <h2 className="font-bold w-14">Cast</h2>
-        <p>{movie?.cast?.map((actor) => actor.name).join(", ")}</p>
+        <p>
+          {cast
+            ?.slice(0, 3)
+            .map((actor) => actor.name)
+            .join(", ")}
+        </p>
       </div>
-      <h1></h1>
-      {video && (
-        <ReactPlayer
-          src={`https://www.youtube.com/watch?v=${video}`}
-          controls={true}
-        />
-      )}
+      <h1 className="font-bold mt-5">More Like This</h1>
+      <div className="flex  justify-between">
+        {similarMovies.length > 0 &&
+          similarMovies
+            .slice(0, 5)
+            .map((similarMovie) => (
+              <MovieCard
+                key={similarMovie.id}
+                id={similarMovie.id}
+                title={similarMovie.title}
+                image={`https://image.tmdb.org/t/p/w500${similarMovie.poster_path}`}
+                rating={similarMovie.vote_average}
+              />
+            ))}
+      </div>
     </div>
   );
 }

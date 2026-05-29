@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-type MovieProps = {
+export type MovieProps = {
   title: string;
   image: string;
   rating: number;
