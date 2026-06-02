@@ -18,8 +18,7 @@ export default function TopRated() {
         `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1`,
         {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDAyYjY2NzQ0ZTY2ZTlmYTM2M2E4NzRkMTYzM2NlMiIsIm5iZiI6MTc3OTI0MzcyMi42NzIsInN1YiI6IjZhMGQxYWNhNWFiYWM5Zjg4YTBjMDhlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MwYe5N4PQeHkl8nM5Tz-kyEFxpCvRN5QA_zFSvjQZb4",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN}`,
           },
         },
       )

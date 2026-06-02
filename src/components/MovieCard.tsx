@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useRouter } from "next/router";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,7 +25,7 @@ let MovieCard = ({ image, rating, title, id }: MovieProps) => {
             src={image}
             width={500}
             height={750}
-            className="w-full h-auto rounded-lg"
+            className="w-full h-auto rounded-lg rounded-b-none"
             alt="movie image"
           />
         </CardHeader>

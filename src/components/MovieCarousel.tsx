@@ -6,16 +6,22 @@ import {
 } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import { CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useRouter } from "next/navigation";
 type MovieProps = {
   movie: {
     title: string;
     backdrop_path: string;
     vote_average: number;
     overview: string;
+    id: number;
   };
 };
 
 export default function MovieCarousel({ movie }: MovieProps) {
+  const router = useRouter();
+  const pushToMovie = () => {
+    router.push(`/${movie.id}`);
+  };
   return (
     <Card
       className="w-full h-[800px] rounded-none border-none bg-cover bg-center relative overflow-hidden flex"
@@ -40,8 +46,11 @@ export default function MovieCarousel({ movie }: MovieProps) {
             {movie.overview}
           </p>
 
-          <button className="mt-6 bg-white text-black px-6 py-3 rounded-md w-fit font-semibold hover:bg-gray-200 transition">
-            Watch Trailer
+          <button
+            onClick={pushToMovie}
+            className="mt-6 bg-white text-black px-6 py-3 rounded-md w-fit font-semibold hover:bg-gray-200 transition"
+          >
+            Watch Now
           </button>
         </CardHeader>
         <div className="flex justify-between">

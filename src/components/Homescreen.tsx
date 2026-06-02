@@ -11,7 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
+import ReactPlayer from "react-player";
 type Movie = {
   id: number;
   title: string;
@@ -22,7 +22,7 @@ type Movie = {
 
 export default function Homescreen() {
   const [movies, setMovies] = useState<Movie[]>([]);
-
+  const [watchkey, setWatchkey] = useState<string>("");
   useEffect(() => {
     const getMovies = async () => {
       try {
@@ -30,11 +30,10 @@ export default function Homescreen() {
           "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDAyYjY2NzQ0ZTY2ZTlmYTM2M2E4NzRkMTYzM2NlMiIsIm5iZiI6MTc3OTI0MzcyMi42NzIsInN1YiI6IjZhMGQxYWNhNWFiYWM5Zjg4YTBjMDhlZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.MwYe5N4PQeHkl8nM5Tz-kyEFxpCvRN5QA_zFSvjQZb4`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN}`,
             },
           },
         );
-
         setMovies(response.data.results);
       } catch (error) {
         console.log(error);
