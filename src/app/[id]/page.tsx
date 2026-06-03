@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { Star } from "lucide-react";
+import { Star, Video } from "lucide-react";
 import Image from "next/image";
 import ReactPlayer from "react-player";
 import MovieCard from "@/components/MovieCard";
