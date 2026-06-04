@@ -2,7 +2,7 @@
 import MovieCard from "@/components/MovieCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import type { MovieDetailType } from "../[id]/page";
 import Header from "@/components/Header";
 import { ChevronRight } from "lucide-react";
@@ -14,30 +14,34 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+
 type genreType = {
   id: number;
   name: string;
 };
+
 const Home = () => {
-  const [allSearchValues, setAllSearchValues] = useState<MovieDetailType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const searchParams = useSearchParams();
-  const search = searchParams.get("query");
   const [searchValues, setSearchValues] = useState<MovieDetailType[]>([]);
   const [genres, setGenres] = useState<genreType[]>([]);
-  const genreId = searchParams.get("genre");
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const search = searchParams.get("query");
+  const genreId = searchParams.get("genreId");
+
   useEffect(() => {
+    // Genres names
     axios
       .get(`https://api.themoviedb.org/3/genre/movie/list`, {
         headers: {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN}`,
         },
       })
-      .then((response) => {
-        console.log(response, "genres response");
-        setGenres(response.data.genres);
-      });
+      .then((response) => setGenres(response.data.genres));
+
+    // Movies by search query
     axios
       .get(
         `https://api.themoviedb.org/3/search/movie?query=${search}&language=en-US&page=${currentPage}`,
@@ -48,24 +52,29 @@ const Home = () => {
         },
       )
       .then((response) => {
-        console.log(response, "search response");
-        setSearchValues(response.data.results);
+        const results: MovieDetailType[] = response.data.results;
+
+        if (genreId) {
+          setSearchValues(
+            results.filter((movie) =>
+              movie.genre_ids.includes(Number(genreId)),
+            ),
+          );
+        } else {
+          setSearchValues(results);
+        }
+
         setTotalPages(response.data.total_pages);
       });
-    axios
-      .get(
-        `https://api.themoviedb.org/3/search/movie?query=${search}&${genreId}&language=en-US&page=${currentPage}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN}`,
-          },
-        },
-      )
-      .then((response) => {
-        console.log(response, "search response");
-        setAllSearchValues(response.data.results);
-      });
-  }, [currentPage, search]);
+  }, [currentPage, search, genreId]);
+
+  const handleGenreClick = (id: number) => {
+    router.push(`/search?query=${search}&genreId=${id}`);
+  };
+
+  const handleClearFilter = () => {
+    router.push(`/search?query=${search}`);
+  };
 
   return (
     <>
@@ -78,21 +87,18 @@ const Home = () => {
           </h3>
           <div className="flex gap-10 flex-wrap">
             {searchValues.length > 0 &&
-              searchValues
-                .slice(0, 4)
-                .map((searchValue) => (
-                  <MovieCard
-                    key={searchValue.id}
-                    id={searchValue.id}
-                    title={searchValue.title}
-                    image={`https://image.tmdb.org/t/p/w500${searchValue.poster_path}`}
-                    rating={searchValue.vote_average}
-                  />
-                ))}
+              searchValues.map((searchValue) => (
+                <MovieCard
+                  key={searchValue.id}
+                  id={searchValue.id}
+                  title={searchValue.title}
+                  image={`https://image.tmdb.org/t/p/w500${searchValue.poster_path}`}
+                  rating={searchValue.vote_average}
+                />
+              ))}
           </div>
           <Pagination>
             <PaginationContent>
-              {/* Previous */}
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
@@ -105,8 +111,6 @@ const Home = () => {
                   }
                 />
               </PaginationItem>
-
-              {/* Page numbers */}
               {[...Array(3)].map((_, i) => {
                 const page = currentPage <= 2 ? i + 1 : currentPage + i - 1;
                 if (page > totalPages) return null;
@@ -125,8 +129,6 @@ const Home = () => {
                   </PaginationItem>
                 );
               })}
-
-              {/* Next */}
               <PaginationItem>
                 <PaginationNext
                   href="#"
@@ -145,24 +147,36 @@ const Home = () => {
             </PaginationContent>
           </Pagination>
         </div>
+
         <div className="w-[30%]">
           <h2 className="text-[24px] font-bold">Search by genre</h2>
           <p>See lists of movies by genre</p>
           <div className="flex flex-wrap gap-3 mt-3">
-            {genres.length > 0 &&
-              genres.map((genre) => (
-                <div
-                  className="border rounded-lg px-2 flex items-center mt-2"
-                  key={genre.id}
-                  onClick={handleFilterGenre}
-                >
-                  {genre.name} <ChevronRight className="h-4 w-4" />
-                </div>
-              ))}
+            <div
+              className={`border rounded-lg px-2 flex items-center mt-2 cursor-pointer hover:bg-accent ${
+                !genreId ? "bg-accent font-bold" : ""
+              }`}
+              onClick={handleClearFilter}
+            >
+              All <ChevronRight className="h-4 w-4" />
+            </div>
+
+            {genres.map((genre) => (
+              <div
+                key={genre.id}
+                className={`border rounded-lg px-2 flex items-center mt-2 cursor-pointer hover:bg-accent ${
+                  Number(genreId) === genre.id ? "bg-accent font-bold" : ""
+                }`}
+                onClick={() => handleGenreClick(genre.id)}
+              >
+                {genre.name} <ChevronRight className="h-4 w-4" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </>
   );
 };
+
 export default Home;

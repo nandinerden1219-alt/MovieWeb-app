@@ -178,17 +178,13 @@ export default function Home() {
           className="rounded-lg mt-6"
           style={{ display: isTrailerShowed ? "block" : "none" }}
         />
-        <iframe
-          src={`https://player.videasy.net/movie/${params.id}`}
-          width="100%"
-          height="100%"
-        ></iframe>
+
         <div className="flex flex-wrap gap-2 mt-6">
           {movie?.genres?.map((genre) => {
             return (
               <p
                 key={genre.id}
-                className="border border-gray-400 text-gray-800 py-1 px-3 rounded-full text-sm font-medium"
+                className="border border-gray-400 py-1 px-3 rounded-full text-sm font-medium"
               >
                 {genre.name}
               </p>

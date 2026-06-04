@@ -9,6 +9,11 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -27,21 +32,10 @@ type genreType = {
 const Header = () => {
   const [genres, setGenres] = useState<genreType[]>([]);
   const router = useRouter();
-  const [value, setValue] = useState("");
   const { setTheme } = useTheme();
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-
-    setValue(value);
-  };
-  const handleOnClick = () => {
-    if (value.trim() !== "") {
-      router.push(`/search?query=${value}`);
-    }
-  };
-  const handleGenre = () => {
-    router.push(`/genre`);
-  };
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<any[]>([]);
   useEffect(() => {
     axios
       .get(`https://api.themoviedb.org/3/genre/movie/list`, {
@@ -49,11 +43,41 @@ const Header = () => {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN}`,
         },
       })
-      .then((response) => {
-        console.log(response, "genres response");
-        setGenres(response.data.genres);
-      });
+      .then((response) => setGenres(response.data.genres));
   }, []);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults([]);
+      setOpen(false);
+      return;
+    }
+    axios
+      .get(`https://api.themoviedb.org/3/search/movie?query=${query}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_TOKEN}`,
+        },
+      })
+      .then((res) => {
+        setResults(res.data.results.slice(0, 5));
+        setOpen(true); // ✅ результат ирмэгц нээх
+      });
+  }, [query]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
+
+  const handleOnClick = () => {
+    if (query.trim() !== "") {
+      router.push(`/search?query=${query}`);
+      setOpen(false);
+    }
+  };
+
+  const handleGenre = () => {
+    router.push(`/genre`);
+  };
 
   return (
     <div className="w-full flex items-center justify-between mt-5.25 px px-5">
@@ -84,12 +108,57 @@ const Header = () => {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <Input
-          type="search"
-          placeholder="Search"
-          className="w-[380px] h-9 border rounded-md"
-          onChange={handleSearch}
-        />
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Input
+              type="search"
+              className="w-[380px] h-9 border rounded-md"
+              placeholder="Search..."
+              value={query}
+              onChange={handleSearch}
+            />
+          </PopoverTrigger>
+          <PopoverContent
+            className="p-0 w-[400px]"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            onInteractOutside={() => setOpen(false)}
+          >
+            {results.map((movie) => (
+              <div
+                key={movie.id}
+                className="flex items-center gap-3 p-3 hover:bg-accent cursor-pointer"
+                onClick={() => {
+                  router.push(`/${movie.id}`);
+                  setOpen(false);
+                  setQuery("");
+                }}
+              >
+                <img
+                  src={`https://image.tmdb.org/t/p/w92${movie.poster_path}`}
+                  className="w-10 h-14 object-cover rounded"
+                />
+                <div>
+                  <p className="font-bold">{movie.title}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {movie.release_date?.slice(0, 4)}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {query && (
+              <div
+                className="p-3 text-sm text-center text-muted-foreground hover:bg-accent cursor-pointer border-t"
+                onClick={() => {
+                  router.push(`/search?query=${query}`);
+                  setOpen(false);
+                  setQuery("");
+                }}
+              >
+                See all results for "{query}"
+              </div>
+            )}
+          </PopoverContent>
+        </Popover>
         <Button onClick={handleOnClick} className="h-9 px-4 py-1.5">
           Search
         </Button>

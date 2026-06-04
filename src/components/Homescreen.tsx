@@ -11,7 +11,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import ReactPlayer from "react-player";
 type Movie = {
   id: number;
   title: string;
