@@ -80,7 +80,7 @@ const Home = () => {
     <>
       <Header />
       <h2 className="font-bold text-[32px] mx-25 mt-10">Search Result</h2>
-      <div className="mx-25 mt-8 flex">
+      <div className="mx-25 mt-8 flex gap-5">
         <div className="w-[70%] gap-8 flex flex-col">
           <h3 className="font-bold text-[20px]">
             {searchValues.length} results for {`"${search}"`}

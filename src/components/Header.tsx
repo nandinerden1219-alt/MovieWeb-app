@@ -8,17 +8,12 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
+import Link from "next/link";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "./ui/input";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -32,7 +27,7 @@ type genreType = {
 const Header = () => {
   const [genres, setGenres] = useState<genreType[]>([]);
   const router = useRouter();
-  const { setTheme } = useTheme();
+
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -60,12 +55,17 @@ const Header = () => {
       })
       .then((res) => {
         setResults(res.data.results.slice(0, 5));
-        setOpen(true); // ✅ результат ирмэгц нээх
+        setOpen(true);
       });
   }, [query]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
+  };
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   const handleOnClick = () => {
@@ -81,10 +81,13 @@ const Header = () => {
 
   return (
     <div className="w-full flex items-center justify-between mt-5.25 px px-5">
-      <div className="flex items-center gap-2">
-        <Film size={50} className="text-[#303F9F]" />
-        <h1 className="text-3xl font-bold text-[#303F9F]">Movie Z</h1>
-      </div>
+      <Link href="/">
+        <div className="flex items-center gap-2">
+          <Film size={50} className="text-[#303F9F]" />
+          <h1 className="text-3xl font-bold text-[#303F9F]">Movie Z</h1>
+        </div>
+      </Link>
+
       <div className="flex items-center gap-2">
         <NavigationMenu>
           <NavigationMenuList>
@@ -99,7 +102,7 @@ const Header = () => {
                 {genres.map((genre) => (
                   <NavigationMenuLink
                     key={genre.id}
-                    onClick={() => router.push(`/genre?query=${genre.id}`)}
+                    onClick={() => router.push(`/genre?genreId=${genre.id}`)}
                   >
                     {genre.name}
                   </NavigationMenuLink>
@@ -159,30 +162,18 @@ const Header = () => {
             )}
           </PopoverContent>
         </Popover>
-        <Button onClick={handleOnClick} className="h-9 px-4 py-1.5">
+        <Button
+          onClick={handleOnClick}
+          variant={"outline"}
+          className="h-9 px-4 py-1.5"
+        >
           Search
         </Button>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon">
-            <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => setTheme("light")}>
-            Light
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("dark")}>
-            Dark
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("system")}>
-            System
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Button variant="outline" size="icon" onClick={toggleTheme}>
+        <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+        <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+      </Button>
     </div>
   );
 };

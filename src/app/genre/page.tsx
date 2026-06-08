@@ -44,7 +44,7 @@ const Home = () => {
 
   // Movies fetch
   useEffect(() => {
-    if (!genreParam) return; // ✅ genre сонгоогүй бол fetch хийхгүй
+    if (!genreParam) return;
     axios
       .get(
         `https://api.themoviedb.org/3/discover/movie?language=en&with_genres=${genreParam}&page=${currentPage}`,
@@ -58,9 +58,8 @@ const Home = () => {
         setGenreValues(response.data.results);
         setTotalPages(response.data.total_pages);
       });
-  }, [genreParam, currentPage]); // ✅ genreParam dependency нэмсэн
+  }, [genreParam, currentPage]);
 
-  // Scroll to top
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
@@ -70,12 +69,10 @@ const Home = () => {
       <Header />
       <h2 className="font-bold text-[32px] mx-25 mt-10">Search Filter</h2>
       <div className="mx-25 mt-8 flex gap-20">
-        {/* Genre товчнууд */}
         <div className="w-[30%]">
           <h2 className="text-[24px] font-bold">Genres</h2>
           <p>See lists of movies by genre</p>
           <div className="flex flex-wrap gap-2 mt-3">
-            {/* All товч */}
             <Link
               href="/genre"
               className={`border rounded-lg px-2 flex items-center mt-2 hover:bg-accent ${
@@ -85,12 +82,11 @@ const Home = () => {
               All <ChevronRight className="h-4 w-4" />
             </Link>
 
-            {/* Genre товчнууд */}
             {genres.map((genre) => {
               const isSelected = selectedGenres.includes(genre.id);
               const updated = isSelected
-                ? selectedGenres.filter((g) => g !== genre.id) // ✅ арилгах
-                : [...selectedGenres, genre.id]; // ✅ нэмэх
+                ? selectedGenres.filter((g) => g !== genre.id)
+                : [...selectedGenres, genre.id];
               const href =
                 updated.length === 0
                   ? "/genre"
@@ -112,7 +108,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Кино жагсаалт */}
         <div className="w-[70%] gap-8 flex flex-col">
           <h3 className="font-bold text-[20px]">
             {genreParam ? (
@@ -139,7 +134,6 @@ const Home = () => {
             ))}
           </div>
 
-          {/* Pagination */}
           {genreParam && (
             <Pagination>
               <PaginationContent>

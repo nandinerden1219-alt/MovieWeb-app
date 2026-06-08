@@ -17,6 +17,8 @@ export type MovieProps = {
 };
 
 let MovieCard = ({ image, rating, title, id }: MovieProps) => {
+  const validImage = image && !image.includes("null");
+  if (!validImage) return null;
   return (
     <Link href={`/${id}`}>
       <Card className="w-[230px] h-[439px] pt-0 ">

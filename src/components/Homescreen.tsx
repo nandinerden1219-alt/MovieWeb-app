@@ -3,7 +3,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import MovieCarousel from "./MovieCarousel";
-
 import {
   Carousel,
   CarouselContent,
@@ -21,7 +20,7 @@ type Movie = {
 
 export default function Homescreen() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [watchkey, setWatchkey] = useState<string>("");
+
   useEffect(() => {
     const getMovies = async () => {
       try {

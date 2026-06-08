@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "./ui/skeleton";
 type Movie = {
   id: number;
   title: string;
@@ -12,6 +13,7 @@ type Movie = {
 };
 export default function TopRated() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     axios
       .get(
@@ -25,6 +27,7 @@ export default function TopRated() {
       .then((response) => {
         console.log(response);
         setMovies(response.data.results);
+        setLoading(false);
       });
   }, []);
   const router = useRouter();
@@ -38,18 +41,29 @@ export default function TopRated() {
           <p>Top Rated</p> <Button onClick={pushToTopRated}>See more</Button>
         </div>
         <div className="flex items-center gap-10 flex-wrap justify-between">
-          {movies.length > 0 &&
-            movies
-              .slice(0, 10)
-              .map((movie) => (
-                <MovieCard
-                  key={movie.id}
-                  title={movie.title}
-                  rating={movie.vote_average}
-                  id={movie.id}
-                  image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                />
-              ))}
+          {loading
+            ? // ✅ Skeleton
+              Array.from({ length: 10 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[230px] h-[439px] flex flex-col gap-2"
+                >
+                  <Skeleton className="w-full h-[340px] rounded-lg" />
+                  <Skeleton className="w-16 h-4 rounded" />
+                  <Skeleton className="w-32 h-5 rounded" />
+                </div>
+              ))
+            : movies
+                .slice(0, 10)
+                .map((movie) => (
+                  <MovieCard
+                    key={movie.id}
+                    title={movie.title}
+                    rating={movie.vote_average}
+                    id={movie.id}
+                    image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                  />
+                ))}
         </div>
       </div>
     </>

@@ -19,6 +19,7 @@ type MovieProps = {
 
 export default function MovieCarousel({ movie }: MovieProps) {
   const router = useRouter();
+
   const pushToMovie = () => {
     router.push(`/${movie.id}`);
   };
