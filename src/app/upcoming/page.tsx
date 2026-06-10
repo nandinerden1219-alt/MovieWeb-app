@@ -2,7 +2,7 @@
 import MovieCard from "@/components/MovieCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import MovieProps from "@/components/MovieCard";
+import Header from "@/components/Header";
 import {
   Pagination,
   PaginationContent,
@@ -45,11 +45,13 @@ export default function Upcoming() {
   }
   return (
     <>
-      <div className="pl-30 pr-30 pt-20 flex flex-col justify-center gap-10 ">
+      {" "}
+      <Header />
+      <div className="pl-50 pr-50 pt-20 flex flex-col justify-center gap-10 ">
         <div className="text-[24px] flex justify-between items-between font-bold">
           <p>Upcoming</p>
         </div>
-        <div className="flex items-center gap-10 flex-wrap justify-between">
+        <div className="grid grid-cols-6 gap-10 ">
           {movies.length > 0 &&
             movies
               .slice(0, 20)
@@ -64,7 +66,6 @@ export default function Upcoming() {
               ))}
         </div>
       </div>
-
       <Pagination>
         <PaginationContent>
           {/* Previous */}

@@ -5,7 +5,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Star } from "lucide-react";
-import { CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { useRouter } from "next/navigation";
 type MovieProps = {
   movie: {
@@ -25,9 +24,11 @@ export default function MovieCarousel({ movie }: MovieProps) {
   };
   return (
     <Card
-      className="w-full h-[800px] rounded-none border-none bg-cover bg-center relative overflow-hidden flex"
+      className="w-full h-[900px] rounded-none border-none bg-cover bg-center relative overflow-hidden flex"
       style={{
         backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
       }}
     >
       <CardContent className=" flex flex-col justify-center items-between h-full p-20 text-white max-w-full">
@@ -54,10 +55,6 @@ export default function MovieCarousel({ movie }: MovieProps) {
             Watch Now
           </button>
         </CardHeader>
-        <div className="flex justify-between">
-          <CarouselPrevious className="relative " />
-          <CarouselNext className="relative " />
-        </div>
       </CardContent>
     </Card>
   );

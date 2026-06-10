@@ -1,5 +1,5 @@
 "use client";
-
+import Autoplay from "embla-carousel-autoplay";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import MovieCarousel from "./MovieCarousel";
@@ -7,8 +7,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 type Movie = {
   id: number;
@@ -42,7 +40,15 @@ export default function Homescreen() {
   }, []);
 
   return (
-    <Carousel className="w-full">
+    <Carousel
+      plugins={[
+        Autoplay({
+          delay: 3000,
+          stopOnInteraction: false,
+        }),
+      ]}
+      className="w-full"
+    >
       <CarouselContent>
         {movies.map((movie) => (
           <CarouselItem key={movie.id}>

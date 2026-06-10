@@ -3,6 +3,7 @@ import MovieCard from "@/components/MovieCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import {
   Pagination,
   PaginationContent,
@@ -38,13 +39,15 @@ export default function NowPlaying() {
         setMovies(response.data.results);
         setTotalPages(response.data.total_pages);
       });
-  }, [currentPage]); // ← currentPage өөрчлөгдөхөд дахин fetch хийнэ
+  }, [currentPage]);
 
   return (
     <>
-      <div className="pl-30 pr-30 pt-20 flex flex-col justify-center gap-10">
+      {" "}
+      <Header />
+      <div className="pl-50 pr-50 pt-20 flex flex-col justify-center gap-10">
         <p className="text-[24px] font-bold">Now Playing</p>
-        <div className="flex items-center gap-10 flex-wrap justify-between">
+        <div className="grid grid-cols-6 gap-10 ">
           {movies.map((movie) => (
             <MovieCard
               key={movie.id}

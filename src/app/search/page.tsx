@@ -14,6 +14,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import Footer from "@/components/Footer";
 
 type genreType = {
   id: number;
@@ -175,6 +176,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

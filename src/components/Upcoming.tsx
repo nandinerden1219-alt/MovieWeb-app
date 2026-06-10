@@ -37,14 +37,16 @@ export default function Upcoming() {
   };
   return (
     <>
-      <div className="pl-30 pr-30 pt-20 flex flex-col justify-center gap-10 ">
+      <div className="pl-40 pr-40 pt-20 flex flex-col justify-center gap-10 ">
         <div className="text-[24px] flex justify-between items-between font-bold">
-          <p>Upcoming</p> <Button onClick={pushToUpcoming}>See more</Button>
+          <p>Upcoming</p>{" "}
+          <Button variant="outline" onClick={pushToUpcoming}>
+            See more
+          </Button>
         </div>
         <div className="flex items-center gap-10 flex-wrap justify-between">
           {loading
-            ? // ✅ Skeleton
-              Array.from({ length: 10 }).map((_, i) => (
+            ? Array.from({ length: 10 }).map((_, i) => (
                 <div
                   key={i}
                   className="w-[230px] h-[439px] flex flex-col gap-2"
@@ -55,7 +57,7 @@ export default function Upcoming() {
                 </div>
               ))
             : movies
-                .slice(0, 10)
+                .slice(0, 14)
                 .map((movie) => (
                   <MovieCard
                     key={movie.id}

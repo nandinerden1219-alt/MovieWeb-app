@@ -12,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import Header from "@/components/Header";
 type Movie = {
   id: number;
   title: string;
@@ -41,11 +42,12 @@ export default function TopRated() {
   }, [currentPage]);
   return (
     <>
-      <div className="pl-30 pr-30 pt-20 flex flex-col justify-center gap-10 ">
+      <Header />
+      <div className="pl-50 pr-50 pt-20 flex flex-col justify-center gap-10">
         <div className="text-[24px] flex justify-between items-between font-bold">
           <p>Top Rated</p>
         </div>
-        <div className="flex items-center gap-10 flex-wrap justify-between">
+        <div className="grid grid-cols-6 gap-10 ">
           {movies.length > 0 &&
             movies
               .slice(0, 20)

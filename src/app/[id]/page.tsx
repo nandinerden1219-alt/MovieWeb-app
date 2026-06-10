@@ -18,6 +18,7 @@ type crewType = {
   name: string;
 };
 export type MovieDetailType = {
+  genre_ids: number[];
   adult: boolean;
   backdrop_path: string;
   belongs_to_collection: null;
@@ -211,13 +212,12 @@ export default function Home() {
         </div>
         <div className="flex justify-between items-center mt-6 mb-6">
           <h1 className="font-bold text-[24px] mt-5">More Like This</h1>
-          <Button className="w-fit h-fit text-lg ">See more</Button>
         </div>
 
         <div className="flex  justify-between">
           {similarMovies.length > 0 &&
             similarMovies
-              .slice(0, 5)
+              .slice(0, 6)
               .map((similarMovie) => (
                 <MovieCard
                   key={similarMovie.id}
