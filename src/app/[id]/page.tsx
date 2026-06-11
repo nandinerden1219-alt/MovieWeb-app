@@ -214,7 +214,7 @@ export default function Home() {
           <h1 className="font-bold text-[24px] mt-5">More Like This</h1>
         </div>
 
-        <div className="flex  justify-between">
+        <div className="flex gap-10 ">
           {similarMovies.length > 0 &&
             similarMovies
               .slice(0, 6)
